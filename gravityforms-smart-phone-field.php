@@ -82,3 +82,22 @@ class GF_SMART_PHONE_FIELD_FREE_Bootstrap {
 function GF_smart_phone_free_field() {
     return GFSPFFreeAddOn::get_instance();
 }
+
+/**
+ * Stop manual update and auto update feature for this plugin.
+ */
+add_filter('site_transient_update_plugins', 'spf_disable_plugin_updates');
+function spf_disable_plugin_updates($value) {
+    if (isset($value->response[plugin_basename(__FILE__)])) {
+        unset($value->response[plugin_basename(__FILE__)]);
+    }
+    return $value;
+}
+
+add_filter('auto_update_plugin', 'spf_disable_auto_updates', 10, 2);
+function spf_disable_auto_updates($update, $item) {
+    if (isset($item->plugin) && $item->plugin === plugin_basename(__FILE__)) {
+        return false;
+    }
+    return $update;
+}
